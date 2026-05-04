@@ -1,0 +1,37 @@
+name: Manifest checkver
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Scoop
+        shell: powershell
+        run: |
+          Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
+          Invoke-RestMethod -Uri 'https://get.scoop.sh' -OutFile 'install.ps1'
+          .\install.ps1 -RunAsAdmin
+          echo "$HOME\scoop\shims" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Validate manifest schema
+        shell: powershell
+        run: |
+          $manifest = Get-Content bucket/hookwarden.json -Raw | ConvertFrom-Json
+          if (-not $manifest.version) { throw "version field missing" }
+          if (-not $manifest.architecture.'64bit'.url) { throw "architecture.64bit.url missing" }
+          if (-not $manifest.architecture.'64bit'.hash) { throw "architecture.64bit.hash missing" }
+          if (-not $manifest.bin) { throw "bin field missing" }
+          if (-not $manifest.checkver.github) { throw "checkver.github missing" }
+          if (-not $manifest.autoupdate) { throw "autoupdate block missing" }
+          Write-Host "Manifest schema validation passed"
+      - name: scoop checkver (informational; ignores placeholder version)
+        shell: powershell
+        continue-on-error: true
+        run: |
+          # checkver requires a real release to compare against; in dev (version 0.0.0) it'll fail-soft.
+          scoop checkver bucket/hookwarden.json
