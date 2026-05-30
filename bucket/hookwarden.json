@@ -1,12 +1,12 @@
 {
-  "version": "0.7.0",
+  "version": "0.7.5",
   "description": "Webhook signature-verification audit tool",
   "homepage": "https://hookwarden.dev",
   "license": "Apache-2.0",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/Hookwarden/hookwarden/releases/download/v0.7.0/hookwarden-windows-x64.exe#/hookwarden.exe",
-      "hash": "84a815d692f9f5219263cc337a007afb46839d0b5e7d756d0fdf5d57cce5a9ad"
+      "url": "https://github.com/Hookwarden/hookwarden/releases/download/v0.7.5/hookwarden-windows-x64.exe#/hookwarden.exe",
+      "hash": "82a8cf872723f266cbfd3cd6bad7ddebdecfff03483611d8d7fe2b233ca9c788"
     }
   },
   "bin": "hookwarden.exe",
